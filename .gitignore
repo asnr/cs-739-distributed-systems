@@ -1,0 +1,4 @@
+secrets/
+projects/1_intro_to_ceph/variables.tf
+*.tfstate*
+*.terraform

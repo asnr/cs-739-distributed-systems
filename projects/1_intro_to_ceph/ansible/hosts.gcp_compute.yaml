@@ -1,0 +1,11 @@
+plugin: gcp_compute
+auth_kind: serviceaccount
+service_account_file: ../../../secrets/service_accounts/intro-to-ceph-e2de69ea8767.json
+projects:
+  - intro-to-ceph
+zones:
+  - us-west1-b
+groups:
+  ceph-admins: "'ceph-admin' in name"
+  ceph-nodes: "'ceph-node' in name"
+filters: null

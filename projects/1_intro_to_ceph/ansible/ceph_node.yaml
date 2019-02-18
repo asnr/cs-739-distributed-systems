@@ -1,0 +1,9 @@
+---
+- hosts: "{{ hosts_var | default('ceph-nodes') }}"
+  tasks:
+    - name: add ceph_admin SSH public key to authorized_keys
+      blockinfile:
+        block: "{{ lookup('file', '../../../secrets/ssh_keys/ceph_admin.pub') }}"
+        dest: ~/.ssh/authorized_keys
+        create: yes
+        mode: 0600

@@ -1,0 +1,82 @@
+---
+- hosts: "{{ hosts_var | default('ceph-admins') }}"
+  tasks:
+    - name: read account variables
+      include_vars:
+        file: ../../../secrets/service_accounts/account.yaml
+        name: account
+    - name: add ceph apt repository key
+      become: yes
+      apt_key:
+        url: 'https://download.ceph.com/keys/release.asc'
+    - name: install apt-transport-https
+      become: yes
+      apt:
+        name: apt-transport-https
+    - name: add ceph apt repository
+      become: yes
+      apt_repository:
+        # $ lsb_release -sc = stretch
+        repo: deb https://download.ceph.com/debian-luminous/ stretch main
+        filename: ceph
+        update_cache: yes
+    - name: install ceph-deploy
+      become: yes
+      apt:
+        name: ceph-deploy
+    - name: copy ceph-admin SSH private key
+      copy:
+        src: ../../../secrets/ssh_keys/ceph_admin
+        dest: ~/.ssh/ceph_admin
+        mode: 0600
+        owner: "{{ account.name }}"
+        group: "{{ account.name }}"
+    - name: create ~/.ssh/config file
+      copy:
+        content: |
+          Host ceph-node1
+          	Hostname ceph-node1
+            User {{ account.name }}
+            IdentityFile ~/.ssh/ceph_admin
+          Host ceph-node2
+          	Hostname ceph-node2
+            User {{ account.name }}
+            IdentityFile ~/.ssh/ceph_admin
+          Host ceph-node3
+          	Hostname ceph-node3
+            User {{ account.name }}
+            IdentityFile ~/.ssh/ceph_admin
+        dest: ~/.ssh/config
+    - name: Scan public keys
+      command: ssh-keyscan -t ecdsa {{ item|quote }}
+      with_items:
+        - ceph-node1
+        - ceph-node2
+        - ceph-node3
+      register: ceph_node_host_public_keys
+    - name: create ~/.ssh/known_hosts
+      known_hosts:
+        name: "{{ item.item }}"
+        key: "{{ item.stdout }}"
+      with_items: "{{ ceph_node_host_public_keys.results }}"
+
+    - name: create ceph_cluster directory
+      file:
+        path: ~/ceph_cluster
+        state: directory
+    - name: foo
+      command: ceph-deploy new ceph-node1
+      args:
+        chdir: ~/ceph_cluster
+        creates: ceph.conf
+      notify: bar
+  handlers:
+    - name: bar
+      command: ceph-deploy install ceph-node1 ceph-node2 ceph-node3
+      args:
+        chdir: ~/ceph_cluster
+      notify: fish
+    - name: fish
+      command: ceph-deploy mon create-initial
+      args:
+        chdir: ~/ceph_cluster

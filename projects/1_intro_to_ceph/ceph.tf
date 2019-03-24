@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = "${file("${var.credentials_file}")}"
+  credentials = "${file("${var.gcloud_credentials_file}")}"
   project     = "intro-to-ceph"
   region      = "us-west1"
 }

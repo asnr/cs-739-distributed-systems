@@ -3,7 +3,7 @@
   tasks:
     - name: read account variables
       include_vars:
-        file: ../../../secrets/service_accounts/account.yaml
+        file: account.yaml
         name: account
     - name: add ceph apt repository key
       become: yes
@@ -26,25 +26,25 @@
         name: ceph-deploy
     - name: copy ceph-admin SSH private key
       copy:
-        src: ../../../secrets/ssh_keys/ceph_admin
+        src: ../secrets/ceph_admin_id_rsa
         dest: ~/.ssh/ceph_admin
         mode: 0600
-        owner: "{{ account.name }}"
-        group: "{{ account.name }}"
+        owner: "{{ account.username }}"
+        group: "{{ account.username }}"
     - name: create ~/.ssh/config file
       copy:
         content: |
           Host ceph-node1
           	Hostname ceph-node1
-            User {{ account.name }}
+            User {{ account.username }}
             IdentityFile ~/.ssh/ceph_admin
           Host ceph-node2
           	Hostname ceph-node2
-            User {{ account.name }}
+            User {{ account.username }}
             IdentityFile ~/.ssh/ceph_admin
           Host ceph-node3
           	Hostname ceph-node3
-            User {{ account.name }}
+            User {{ account.username }}
             IdentityFile ~/.ssh/ceph_admin
         dest: ~/.ssh/config
     - name: Scan public keys

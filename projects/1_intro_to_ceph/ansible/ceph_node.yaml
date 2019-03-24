@@ -3,7 +3,7 @@
   tasks:
     - name: add ceph_admin SSH public key to authorized_keys
       blockinfile:
-        block: "{{ lookup('file', '../../../secrets/ssh_keys/ceph_admin.pub') }}"
+        block: "{{ lookup('file', '../secrets/ceph_admin_id_rsa.pub') }}"
         dest: ~/.ssh/authorized_keys
         create: yes
         mode: 0600

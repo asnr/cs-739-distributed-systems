@@ -1,6 +1,6 @@
 plugin: gcp_compute
 auth_kind: serviceaccount
-service_account_file: ../../../secrets/service_accounts/intro-to-ceph-e2de69ea8767.json
+service_account_file: ../secrets/intro-to-ceph-06e70bba3110.json
 projects:
   - intro-to-ceph
 zones:

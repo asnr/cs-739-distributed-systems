@@ -1,4 +1,5 @@
 secrets/
-projects/1_intro_to_ceph/variables.tf
+projects/1_intro_to_ceph/secrets.tf
+projects/1_intro_to_ceph/ansible/account.yaml
 *.tfstate*
 *.terraform

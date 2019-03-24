@@ -34,7 +34,7 @@ resource "google_compute_instance" "ceph_admin" {
   }
 
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -u ${var.gcp_remote_user} -i '${self.network_interface.0.access_config.0.nat_ip},' --private-key ${var.ssh_private_key} --extra-vars 'hosts_var=all' ansible/ceph_admin.yaml"
+    command = "ANSIBLE_CONFIG=ansible/ansible.cfg pipenv run ansible-playbook -u ${var.gcp_remote_user} -i '${self.network_interface.0.access_config.0.nat_ip},' --private-key ${var.ssh_private_key} --extra-vars 'hosts_var=all' ansible/ceph_admin.yaml"
   }
 }
 
@@ -77,6 +77,6 @@ resource "google_compute_instance" "ceph_node" {
   }
 
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -u ${var.gcp_remote_user} -i '${self.network_interface.0.access_config.0.nat_ip},' --private-key ${var.ssh_private_key} --extra-vars 'hosts_var=all' ansible/ceph_node.yaml"
+    command = "ANSIBLE_CONFIG=ansible/ansible.cfg pipenv run ansible-playbook -u ${var.gcp_remote_user} -i '${self.network_interface.0.access_config.0.nat_ip},' --private-key ${var.ssh_private_key} --extra-vars 'hosts_var=all' ansible/ceph_node.yaml"
   }
 }
